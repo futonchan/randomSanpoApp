@@ -34,6 +34,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         case minute10 = "10"
         case minute30 = "30"
         case minute60 = "60"
+        case minute180 = "180"
     }
     var selectedMinutes = MinutesMenu.minute10
     @IBOutlet weak var minutesSubLabel: UILabel!
@@ -140,7 +141,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { [self] _ in
             self.time -= 1.0
             let hours = Int(self.time / 3600)
-            let minutes = Int(self.time / 60)
+            let minutes = Int(self.time.truncatingRemainder(dividingBy: 3600) / 60)
             let second = Int(self.time) % 60
             self.timerLabel.text = String(format: "%02d:%02d:%02d", hours, minutes, second)
             if self.time <= 0.0 {
@@ -185,6 +186,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func initChangeMinutesBtn() {
         let menu = UIMenu(options: .displayInline, children: [
+            UIAction(title: MinutesMenu.minute180.rawValue, handler: { _ in
+                self.selectedMinutes = .minute180
+                self.initChangeMinutesBtn()
+            }),
             UIAction(title: MinutesMenu.minute60.rawValue, handler: { _ in
                 self.selectedMinutes = .minute60
                 self.initChangeMinutesBtn()
