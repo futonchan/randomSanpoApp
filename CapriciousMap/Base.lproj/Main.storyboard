@@ -170,9 +170,13 @@
                         <outlet property="changeDirectionButton" destination="vg4-xC-wTK" id="anI-KM-Wxe"/>
                         <outlet property="changeDirectionNumButton" destination="8tP-VO-UU7" id="Wpt-J9-t7k"/>
                         <outlet property="changeMinutesButton" destination="9iv-3g-pkn" id="Nx5-XC-l98"/>
+                        <outlet property="directionChangeSubLabel" destination="4Rw-NP-bQB" id="4tu-LT-zfj"/>
                         <outlet property="directionLabel" destination="Oow-Z5-kdL" id="u9e-7X-KnB"/>
+                        <outlet property="directionNumSubLabel" destination="Lz1-7P-2CW" id="XSW-zo-4fn"/>
+                        <outlet property="directionSubLabel" destination="0Vv-Va-Xy5" id="Q9a-95-6Fn"/>
                         <outlet property="lowerView" destination="Utg-HC-SmK" id="5bm-mR-Qe3"/>
                         <outlet property="mainView" destination="8bC-Xf-vdC" id="akk-d1-8WX"/>
+                        <outlet property="minutesSubLabel" destination="tPn-jC-8IP" id="gNe-8i-Tgs"/>
                         <outlet property="startButton" destination="Vic-y0-5vt" id="rmg-YD-sJg"/>
                         <outlet property="timerLabel" destination="Ilu-hl-4Kc" id="IVg-Oi-zJ7"/>
                         <outlet property="upperView" destination="08x-21-K38" id="Ify-zM-E6u"/>

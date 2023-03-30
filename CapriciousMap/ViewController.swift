@@ -25,6 +25,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         case order = "順番"
     }
     var selectedDirection = DirectionChangeMenu.random
+    @IBOutlet weak var directionChangeSubLabel: UILabel!
     
     @IBOutlet weak var changeMinutesButton: UIButton!
     enum MinutesMenu: String {
@@ -34,7 +35,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         case minute30 = "30"
         case minute60 = "60"
     }
-    var selectedMinutes = MinutesMenu.minute1
+    var selectedMinutes = MinutesMenu.minute10
+    @IBOutlet weak var minutesSubLabel: UILabel!
     
     @IBOutlet weak var changeDirectionNumButton: UIButton!
     enum DirectionNumMenu: String {
@@ -42,6 +44,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         case direction8 = "8"
     }
     var selectedDirectionNum = DirectionNumMenu.direction4
+    @IBOutlet weak var directionNumSubLabel: UILabel!
     
     @IBOutlet weak var directionLabel: UILabel!
     var currentIndex = 3 // 北, 南西をデフォルトに
@@ -50,9 +53,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     let direction8Texts = ["東", "南東", "南", "南西", "西", "北西", "北", "北東"]
     let direction4Add = [-90.0, 180.0, 90.0, 0.0]
     let direction8Add = [-90.0, -135.0, 180.0, 135.0, 90.0, 45.0, 0.0, -45.0]
-
-    @IBOutlet var mainView: UIView!
+    @IBOutlet weak var directionSubLabel: UILabel!
+    
     @IBOutlet weak var upperView: UIView!
+    @IBOutlet var mainView: UIView!
     @IBOutlet weak var lowerView: UIView!
     
     @IBOutlet weak var arrow: UIImageView!
@@ -94,6 +98,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             self.time = 0.0
             startButton.setTitle("出発", for: .normal)
             startButton.configuration?.baseBackgroundColor = UIColor.systemGreen
+            
+            timerLabel.textColor = UIColor.black
+            directionLabel.textColor = UIColor.black
+            directionSubLabel.textColor = UIColor.black
+            upperView.backgroundColor = UIColor.opaqueSeparator
+            
+            mainView.backgroundColor = UIColor.systemBackground
+            
+            minutesSubLabel.textColor = UIColor.black
+            directionChangeSubLabel.textColor = UIColor.black
+            directionNumSubLabel.textColor = UIColor.black
+            lowerView.backgroundColor = UIColor.opaqueSeparator
         }
     }
     
@@ -134,17 +150,31 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         })
         startButton.setTitle("終了", for: .normal)
         startButton.configuration?.baseBackgroundColor = UIColor.systemRed
+        
+        let mySystemGray = "C0C0C0"
+        timerLabel.textColor = UIColor(hex: mySystemGray)
+        directionLabel.textColor = UIColor(hex: mySystemGray)
+        directionSubLabel.textColor = UIColor(hex: mySystemGray)
+        upperView.backgroundColor = UIColor(hex: "1C1C1E")
+        
+        mainView.backgroundColor = UIColor(hex: "74829A")
+        
+        minutesSubLabel.textColor = UIColor(hex: mySystemGray)
+        directionChangeSubLabel.textColor = UIColor(hex: mySystemGray)
+        directionNumSubLabel.textColor = UIColor(hex: mySystemGray)
+        lowerView.backgroundColor = UIColor(hex: "1C1C1E")
+        
         locationManager.startUpdatingHeading()
     }
     
     func initChangeDirectionBtn() {
-        let menu = UIMenu(title: DirectionChangeMenu.random.rawValue, options: .displayInline, children: [
-            UIAction(title: DirectionChangeMenu.random.rawValue, handler: { _ in
-                self.selectedDirection = .random
-                self.initChangeDirectionBtn()
-            }),
+        let menu = UIMenu(options: .displayInline, children: [
             UIAction(title: DirectionChangeMenu.order.rawValue, handler: { _ in
                 self.selectedDirection = .order
+                self.initChangeDirectionBtn()
+            }),
+            UIAction(title: DirectionChangeMenu.random.rawValue, handler: { _ in
+                self.selectedDirection = .random
                 self.initChangeDirectionBtn()
             })
         ])
@@ -154,7 +184,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func initChangeMinutesBtn() {
-        let menu = UIMenu(title: MinutesMenu.minute1.rawValue, options: .displayInline, children: [
+        let menu = UIMenu(options: .displayInline, children: [
             UIAction(title: MinutesMenu.minute60.rawValue, handler: { _ in
                 self.selectedMinutes = .minute60
                 self.initChangeMinutesBtn()
@@ -183,7 +213,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func initChangeDirectionNumBtn() {
-        let menu = UIMenu(title: DirectionNumMenu.direction4.rawValue, options: .displayInline, children: [
+        let menu = UIMenu(options: .displayInline, children: [
             UIAction(title: DirectionNumMenu.direction8.rawValue, handler: { _ in
                 self.selectedDirectionNum = .direction8
                 self.initChangeDirectionNumBtn()
@@ -199,3 +229,62 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
 }
 
+
+extension UIColor {
+    convenience init?(hex: String) {
+        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
+        
+        var rgb: UInt64 = 0
+        var r: CGFloat = 0.0
+        var g: CGFloat = 0.0
+        var b: CGFloat = 0.0
+        var a: CGFloat = 1.0
+        
+        let length = hexSanitized.count
+        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }
+        
+        if length == 6 {
+            r = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
+            g = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
+            b = CGFloat(rgb & 0x0000FF) / 255.0
+        } else if length == 8 {
+            r = CGFloat((rgb & 0xFF000000) >> 24) / 255.0
+            g = CGFloat((rgb & 0x00FF0000) >> 16) / 255.0
+            b = CGFloat((rgb & 0x0000FF00) >> 8) / 255.0
+            a = CGFloat(rgb & 0x000000FF) / 255.0
+        } else {
+            return nil
+        }
+        
+        self.init(red: r, green: g, blue: b, alpha: a)
+    }
+    
+    func toHexString() -> String {
+        var red: CGFloat     = 1.0
+        var green: CGFloat   = 1.0
+        var blue: CGFloat    = 1.0
+        var alpha: CGFloat   = 1.0
+        self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+        let r = Int(String(Int(floor(red*100)/100 * 255)).replacingOccurrences(of: "-", with: ""))!
+        let g = Int(String(Int(floor(green*100)/100 * 255)).replacingOccurrences(of: "-", with: ""))!
+        let b = Int(String(Int(floor(blue*100)/100 * 255)).replacingOccurrences(of: "-", with: ""))!
+        let a = Int(String(Int(floor(alpha*100)/100 * 255)).replacingOccurrences(of: "-", with: ""))!
+
+        let result = String(r, radix: 16).leftPadding(toLength: 2, withPad: "0") + String(g, radix: 16).leftPadding(toLength: 2, withPad: "0") + String(b, radix: 16).leftPadding(toLength: 2, withPad: "0") + String(a, radix: 16).leftPadding(toLength: 2, withPad: "0")
+        return result
+    }
+}
+
+extension String {
+    // 左から文字埋めする
+    func leftPadding(toLength: Int, withPad character: Character) -> String {
+        let stringLength = self.count
+        if stringLength < toLength {
+            return String(repeatElement(character, count: toLength - stringLength)) + self
+        } else {
+            return String(self.suffix(toLength))
+        }
+    }
+}
