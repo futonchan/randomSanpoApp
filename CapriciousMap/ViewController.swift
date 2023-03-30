@@ -227,6 +227,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         changeDirectionNumButton.showsMenuAsPrimaryAction = true
         changeDirectionNumButton.setTitle(self.selectedDirectionNum.rawValue, for: .normal)
     }
+    
+    // 画面を縦方向に固定する
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
 }
 
 
