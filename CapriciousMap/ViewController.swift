@@ -11,7 +11,31 @@ import UIKit
 import CoreLocation
 import CoreMotion
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, backgroundTimerDelegate {
+    
+    func setCurrentTimer(_ elapsedTime: Int) {
+        //残り時間から引数(バックグラウンドでの経過時間)を引く
+        self.time -= Double(elapsedTime)
+        let hours = Int(self.time / 3600)
+        let minutes = Int(self.time.truncatingRemainder(dividingBy: 3600) / 60)
+        let second = Int(self.time) % 60
+        self.timerLabel.text = String(format: "%02d:%02d:%02d", hours, minutes, second)
+        //再びタイマーを起動
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(advancedTime), userInfo: nil, repeats: true)
+    }
+    
+    func deleteTimer() {
+        //起動中のタイマーを破棄
+        timer.invalidate()
+    }
+    
+    func checkBackground() {
+        //バックグラウンドへの移行を確認
+        timerIsBackground = true
+    }
+    
+    var timerIsBackground: Bool = false
+    
 
     let locationManager = CLLocationManager()
     @IBOutlet weak var timerLabel: UILabel!
@@ -67,6 +91,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         initChangeDirectionBtn()
         initChangeMinutesBtn()
         initChangeDirectionNumBtn()
+        
+        //SceneDelegateを取得
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let sceneDelegate = windowScene.delegate as? SceneDelegate else {
+            return
+        }
+        sceneDelegate.delegate = self
     }
     
     func initLocationManager() {
@@ -100,16 +131,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             startButton.setTitle("出発", for: .normal)
             startButton.configuration?.baseBackgroundColor = UIColor.systemGreen
             
-            timerLabel.textColor = UIColor.black
-            directionLabel.textColor = UIColor.black
-            directionSubLabel.textColor = UIColor.black
+            timerLabel.textColor = UIColor.label
+            directionLabel.textColor = UIColor.label
+            directionSubLabel.textColor = UIColor.label
             upperView.backgroundColor = UIColor.opaqueSeparator
             
             mainView.backgroundColor = UIColor.systemBackground
             
-            minutesSubLabel.textColor = UIColor.black
-            directionChangeSubLabel.textColor = UIColor.black
-            directionNumSubLabel.textColor = UIColor.black
+            minutesSubLabel.textColor = UIColor.label
+            directionChangeSubLabel.textColor = UIColor.label
+            directionNumSubLabel.textColor = UIColor.label
             lowerView.backgroundColor = UIColor.opaqueSeparator
         }
     }
@@ -138,17 +169,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         // 時間設定
         self.time = Double(self.selectedMinutes.rawValue)! * 60.0
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { [self] _ in
-            self.time -= 1.0
-            let hours = Int(self.time / 3600)
-            let minutes = Int(self.time.truncatingRemainder(dividingBy: 3600) / 60)
-            let second = Int(self.time) % 60
-            self.timerLabel.text = String(format: "%02d:%02d:%02d", hours, minutes, second)
-            if self.time <= 0.0 {
-                timer.invalidate()
-                settingDirection()
-            }
-        })
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(advancedTime), userInfo: nil, repeats: true)
+        
         startButton.setTitle("終了", for: .normal)
         startButton.configuration?.baseBackgroundColor = UIColor.systemRed
         
@@ -166,6 +188,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         lowerView.backgroundColor = UIColor(hex: "1C1C1E")
         
         locationManager.startUpdatingHeading()
+    }
+    
+    @objc func advancedTime() {
+        if self.time >= 1.0 {
+            self.time -= 1.0
+            let hours = Int(self.time / 3600)
+            let minutes = Int(self.time.truncatingRemainder(dividingBy: 3600) / 60)
+            let second = Int(self.time) % 60
+            self.timerLabel.text = String(format: "%02d:%02d:%02d", hours, minutes, second)
+        } else {
+            timer.invalidate()
+            settingDirection()
+        }
     }
     
     func initChangeDirectionBtn() {

@@ -7,6 +7,17 @@
 
 import UIKit
 
+protocol backgroundTimerDelegate: class {
+    //バックグラウンドの経過時間を渡す
+    func setCurrentTimer(_ elapsedTime:Int)
+    //バックグラウンド時にタイマーを破棄
+    func deleteTimer()
+    //バックグラウンドへの移行を検知
+    func checkBackground()
+    //バックグラウンド中かどうかを示す
+    var timerIsBackground:Bool { set get }
+}
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -25,15 +36,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Release any resources associated with this scene that can be re-created the next time the scene connects.
         // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
     }
-
+    //デリゲート
+    weak var delegate: backgroundTimerDelegate?
+    let ud = UserDefaults.standard
+    //アプリ画面に復帰した時
     func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        //タイマー起動中にバックグラウンドへ移行した？
+        if delegate?.timerIsBackground == true {
+            let calender = Calendar(identifier: .gregorian)
+            let date1 = ud.value(forKey: "date1") as! Date
+            let date2 = Date()
+            let elapsedTime = calender.dateComponents([.second], from: date1, to: date2).second!
+            //経過時間（elapsedTime）をbackgroundTimer.swiftに渡す
+            delegate?.setCurrentTimer(elapsedTime)
+        }
     }
 
+    //アプリ画面から離れる時（ホームボタン押下、スリープ）
     func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
+        ud.set(Date(), forKey: "date1")
+        //タイマー起動中からのバックグラウンドへの移行を検知
+        delegate?.checkBackground()
+        //タイマーを破棄
+        delegate?.deleteTimer()
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
