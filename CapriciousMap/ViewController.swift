@@ -21,7 +21,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBOutlet weak var changeDirectionButton: UIButton!
     enum DirectionChangeMenu: String {
-        case random = "ランダム"
+        case random = "ﾗﾝﾀﾞﾑ"
         case order = "順番"
     }
     var selectedDirection = DirectionChangeMenu.random
@@ -51,6 +51,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     let direction4Add = [-90.0, 180.0, 90.0, 0.0]
     let direction8Add = [-90.0, -135.0, 180.0, 135.0, 90.0, 45.0, 0.0, -45.0]
 
+    @IBOutlet var mainView: UIView!
+    @IBOutlet weak var upperView: UIView!
+    @IBOutlet weak var lowerView: UIView!
+    
     @IBOutlet weak var arrow: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,7 +92,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             timer.invalidate()
             self.timerLabel.text = "00:00:00"
             self.time = 0.0
-            startButton.setTitle("START", for: .normal)
+            startButton.setTitle("出発", for: .normal)
+            startButton.configuration?.baseBackgroundColor = UIColor.systemGreen
         }
     }
     
@@ -127,7 +132,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 settingDirection()
             }
         })
-        startButton.setTitle("STOP", for: .normal)
+        startButton.setTitle("終了", for: .normal)
+        startButton.configuration?.baseBackgroundColor = UIColor.systemRed
         locationManager.startUpdatingHeading()
     }
     
@@ -149,24 +155,25 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func initChangeMinutesBtn() {
         let menu = UIMenu(title: MinutesMenu.minute1.rawValue, options: .displayInline, children: [
-            UIAction(title: MinutesMenu.minute1.rawValue, handler: { _ in
-                self.selectedMinutes = .minute1
-                self.initChangeMinutesBtn()
-            }),
-            UIAction(title: MinutesMenu.minute5.rawValue, handler: { _ in
-                self.selectedMinutes = .minute5
-                self.initChangeMinutesBtn()
-            }),
-            UIAction(title: MinutesMenu.minute10.rawValue, handler: { _ in
-                self.selectedMinutes = .minute10
+            UIAction(title: MinutesMenu.minute60.rawValue, handler: { _ in
+                self.selectedMinutes = .minute60
                 self.initChangeMinutesBtn()
             }),
             UIAction(title: MinutesMenu.minute30.rawValue, handler: { _ in
                 self.selectedMinutes = .minute30
                 self.initChangeMinutesBtn()
             }),
-            UIAction(title: MinutesMenu.minute60.rawValue, handler: { _ in
-                self.selectedMinutes = .minute60
+            UIAction(title: MinutesMenu.minute10.rawValue, handler: { _ in
+                self.selectedMinutes = .minute10
+                self.initChangeMinutesBtn()
+            }),
+            UIAction(title: MinutesMenu.minute5.rawValue, handler: { _ in
+                self.selectedMinutes = .minute5
+                self.initChangeMinutesBtn()
+            }),
+            
+            UIAction(title: MinutesMenu.minute1.rawValue, handler: { _ in
+                self.selectedMinutes = .minute1
                 self.initChangeMinutesBtn()
             })
         ])
@@ -177,12 +184,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func initChangeDirectionNumBtn() {
         let menu = UIMenu(title: DirectionNumMenu.direction4.rawValue, options: .displayInline, children: [
-            UIAction(title: DirectionNumMenu.direction4.rawValue, handler: { _ in
-                self.selectedDirectionNum = .direction4
-                self.initChangeDirectionNumBtn()
-            }),
             UIAction(title: DirectionNumMenu.direction8.rawValue, handler: { _ in
                 self.selectedDirectionNum = .direction8
+                self.initChangeDirectionNumBtn()
+            }),
+            UIAction(title: DirectionNumMenu.direction4.rawValue, handler: { _ in
+                self.selectedDirectionNum = .direction4
                 self.initChangeDirectionNumBtn()
             })
         ])

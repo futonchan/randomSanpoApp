@@ -13,6 +13,7 @@
 		E04B12A629C5A13E008C8888 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E04B12A429C5A13E008C8888 /* Main.storyboard */; };
 		E04B12A829C5A140008C8888 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E04B12A729C5A140008C8888 /* Assets.xcassets */; };
 		E04B12AB29C5A140008C8888 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E04B12A929C5A140008C8888 /* LaunchScreen.storyboard */; };
+		E04CE6D629D5751900429185 /* arrowStroke.png in Resources */ = {isa = PBXBuildFile; fileRef = E04CE6D529D5751900429185 /* arrowStroke.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		E04B12A729C5A140008C8888 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E04B12AA29C5A140008C8888 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E04B12AC29C5A140008C8888 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E04CE6D529D5751900429185 /* arrowStroke.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrowStroke.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				E04B12A029C5A13E008C8888 /* SceneDelegate.swift */,
 				E04B12A229C5A13E008C8888 /* ViewController.swift */,
 				E04B12A429C5A13E008C8888 /* Main.storyboard */,
+				E04CE6D529D5751900429185 /* arrowStroke.png */,
 				E04B12A729C5A140008C8888 /* Assets.xcassets */,
 				E04B12A929C5A140008C8888 /* LaunchScreen.storyboard */,
 				E04B12AC29C5A140008C8888 /* Info.plist */,
@@ -126,6 +129,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E04B12AB29C5A140008C8888 /* LaunchScreen.storyboard in Resources */,
+				E04CE6D629D5751900429185 /* arrowStroke.png in Resources */,
 				E04B12A829C5A140008C8888 /* Assets.xcassets in Resources */,
 				E04B12A629C5A13E008C8888 /* Main.storyboard in Resources */,
 			);
