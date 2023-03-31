@@ -294,6 +294,7 @@
 				DEVELOPMENT_TEAM = P8XB7ZUYP8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CapriciousMap/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "ランダム散歩";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "現在の方位を取得するために位置情報を使用します";
 				INFOPLIST_KEY_NSMotionUsageDescription = "現在の方位を取得するためにモーションセンサーを使用します";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -325,6 +326,7 @@
 				DEVELOPMENT_TEAM = P8XB7ZUYP8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CapriciousMap/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "ランダム散歩";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "現在の方位を取得するために位置情報を使用します";
 				INFOPLIST_KEY_NSMotionUsageDescription = "現在の方位を取得するためにモーションセンサーを使用します";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
