@@ -10,6 +10,7 @@
 import UIKit
 import CoreLocation
 import CoreMotion
+import UserNotifications
 
 class ViewController: UIViewController, CLLocationManagerDelegate, backgroundTimerDelegate {
     
@@ -19,7 +20,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, backgroundTim
         let hours = Int(self.time / 3600)
         let minutes = Int(self.time.truncatingRemainder(dividingBy: 3600) / 60)
         let second = Int(self.time) % 60
-        self.timerLabel.text = String(format: "%02d:%02d:%02d", hours, minutes, second)
+        if self.time <= 0 {
+            self.timerLabel.text = "00:00:00"
+        } else {
+            self.timerLabel.text = String(format: "%02d:%02d:%02d", hours, minutes, second)
+        }
         //再びタイマーを起動
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(advancedTime), userInfo: nil, repeats: true)
     }
@@ -98,6 +103,28 @@ class ViewController: UIViewController, CLLocationManagerDelegate, backgroundTim
             return
         }
         sceneDelegate.delegate = self
+        
+        // 通知の許可を取得
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            if let error = error {
+                // エラーが発生した場合の処理
+                print("通知の許可を求める際にエラーが発生しました: \(error.localizedDescription)")
+            } else if granted {
+                // 通知が許可された場合の処理
+                DispatchQueue.main.async {
+                    let alertController = UIAlertController(title: "通知が許可されました", message: "アプリがバックグラウンドにある場合、設定された時間が経過しても通知が届きます。", preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alertController, animated: true)
+                }
+            } else {
+                // 通知が拒否された場合の処理
+                DispatchQueue.main.async {
+                    let alertController = UIAlertController(title: "通知が拒否されました", message: "アプリがバックグラウンドにある場合、設定された時間が経過しても通知が届きません。", preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alertController, animated: true)
+                }
+            }
+        }
     }
     
     func initLocationManager() {
@@ -142,6 +169,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, backgroundTim
             directionChangeSubLabel.textColor = UIColor.label
             directionNumSubLabel.textColor = UIColor.label
             lowerView.backgroundColor = UIColor.opaqueSeparator
+            
+            // まだ配信されていない通知をすべて削除
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         }
     }
     
@@ -170,7 +200,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, backgroundTim
         // 時間設定
         self.time = Double(self.selectedMinutes.rawValue)! * 60.0
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(advancedTime), userInfo: nil, repeats: true)
+        setTimerNotificate(time: self.time)
         
+        // ボタン、Viewの背景の色を変更する
         startButton.setTitle("終了", for: .normal)
         startButton.configuration?.baseBackgroundColor = UIColor.systemRed
         
@@ -271,6 +303,36 @@ class ViewController: UIViewController, CLLocationManagerDelegate, backgroundTim
     // 画面を縦方向に固定する
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
+    }
+    
+    func setTimerNotificate(time: Double) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            if settings.authorizationStatus == .authorized {
+                // 通知が許可されている場合の処理
+                // 通知の内容を作成する
+                let content = UNMutableNotificationContent()
+                content.title = "\(self.selectedMinutes)が経過しました"
+                content.body = "次の方角を確認しましょう！"
+
+                // 通知をトリガーする時間を設定する
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: time, repeats: false)
+
+                // 通知リクエストを作成する
+                let request = UNNotificationRequest(identifier: "timerNotification", content: content, trigger: trigger)
+
+                // 通知をスケジュールする
+                let center = UNUserNotificationCenter.current()
+                center.add(request) { error in
+                    if let error = error {
+                        print("通知のスケジュールに失敗しました: \(error.localizedDescription)")
+                    } else {
+                        print("通知をスケジュールしました")
+                    }
+                }
+            } else {
+                // 通知が許可されていない場合の処理
+            }
+        }
     }
 }
 
