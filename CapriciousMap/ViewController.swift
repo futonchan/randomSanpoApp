@@ -36,7 +36,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, backgroundTim
     
     func checkBackground() {
         //バックグラウンドへの移行を確認
-        timerIsBackground = true
+        if timer.isValid {
+            timerIsBackground = true
+        }
     }
     
     var timerIsBackground: Bool = false
